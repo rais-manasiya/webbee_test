@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Workshop;
+use Carbon\Carbon;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -103,11 +104,10 @@ class EventsController extends BaseController
      */
 
     public function getEventsWithWorkshops() {
-        //throw new \Exception('implement in coding task 1');
+        $result = event::with('workshops')->get();
         
-        $events = Workshop::join('events ', 'events.id', '=', 'workshops.event_id')
-        ->get(['users.*', 'workshops.*']);
-        return $events;
+        $events = json_decode(json_encode($result), true);
+           return response()->json($events);
     }
 
 
@@ -186,6 +186,13 @@ class EventsController extends BaseController
      */
 
     public function getFutureEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 2');
-    }
+        $current_date = Carbon::now();        
+        $date = Carbon::parse($current_date)->format('Y-m-d H:i:s');
+        
+        $result = event::with('workshops')->get();
+        
+        $events = json_decode(json_encode($result), true);
+           return response()->json($events);
+            
+            }
 }
